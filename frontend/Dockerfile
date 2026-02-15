@@ -1,24 +1,23 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:18 AS build
 
 WORKDIR /app
 
-# Empty = same origin; nginx proxies /api and /socket.io to backend
-ARG VITE_API_URL=
-ENV VITE_API_URL=$VITE_API_URL
-
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 COPY . .
 RUN npm run build
 
-# Serve stage
-FROM nginx:alpine
+# Production stage
+FROM node:18-alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+WORKDIR /app
 
-EXPOSE 80
+RUN npm install -g serve
 
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=build /app/dist ./dist
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "dist", "-l", "3000"]
