@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-cosmic-black text-cosmic-white font-sans antialiased;
+}
+
+/* SpaceX-style minimal selection */
+::selection {
+  @apply bg-white/20 text-white;
+}
